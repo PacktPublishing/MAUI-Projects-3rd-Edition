@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SticksAndStones.Functions", "SticksAndStones.Functions\SticksAndStones.Functions.csproj", "{F7BA2341-6847-43BE-B066-D992F081F183}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SticksAndStones.Shared", "SticksAndStones.Shared\SticksAndStones.Shared.csproj", "{531D2C7F-0B60-47A8-B703-D37086C956A6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F7BA2341-6847-43BE-B066-D992F081F183}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7BA2341-6847-43BE-B066-D992F081F183}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7BA2341-6847-43BE-B066-D992F081F183}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7BA2341-6847-43BE-B066-D992F081F183}.Release|Any CPU.Build.0 = Release|Any CPU
+		{531D2C7F-0B60-47A8-B703-D37086C956A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{531D2C7F-0B60-47A8-B703-D37086C956A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{531D2C7F-0B60-47A8-B703-D37086C956A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{531D2C7F-0B60-47A8-B703-D37086C956A6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0BFBFC5D-0679-44A7-8171-A0AE01DC0DA3}
+	EndGlobalSection
+EndGlobal
