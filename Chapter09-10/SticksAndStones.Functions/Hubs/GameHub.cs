@@ -203,4 +203,51 @@ public class GameHub : ServerlessHub
         return new(response);
     }
 
+    [FunctionName("AcknowledgeChallenge")]
+    public async Task AcknowledgeChallenge(
+    [HttpTrigger(AuthorizationLevel.Function, "post", Route = $"Challenge/Ack")] HttpRequest req,
+    ILogger log)
+    {
+        var result = await JsonSerializer.DeserializeAsync<AcknowledgeChallengeRequest>(req.Body, jsonOptions);
+
+        var challenge = challengeHandler.Respond(result.Id, result.Response);
+        if (challenge.Id == Guid.Empty)
+        {
+            return;
+        }
+
+        var challenger = challenge.Challenger;
+        var opponent = challenge.Opponent;
+
+        if (result.Response == ChallengeResponse.Declined)
+        {
+            log.LogInformation($"{opponent.GamerTag} has declined the challenge from {challenger.GamerTag}!");
+        }
+
+        if (result.Response == ChallengeResponse.Accepted)
+        {
+            log.LogInformation($"{opponent.GamerTag} has accepted the challenge from {challenger.GamerTag}!");
+
+            using var context = contextFactory.CreateDbContext();
+
+            var match = Match.New(challenger.Id, opponent.Id);
+            context.Matches.Add(match);
+
+            opponent.MatchId = challenger.MatchId = match.Id;
+
+            context.Players.Update(opponent);
+            context.Players.Update(challenger);
+            context.SaveChanges();
+
+            log.LogInformation($"Created match {match.Id} bewteen {opponent.GamerTag} and {challenger.GamerTag}!");
+
+            // Create Group for Game
+            await UserGroups.AddToGroupAsync(opponent.Id.ToString(), $"Match[{match.Id}]");
+            await UserGroups.AddToGroupAsync(challenger.Id.ToString(), $"Match[{match.Id}]");
+            await Clients.Group($"Match[{match.Id}]").SendAsync(Constants.Events.MatchStarted, new MatchStartedEventArgs(match));
+
+            await Clients.All.SendAsync(Constants.Events.PlayerUpdated, new PlayerUpdatedEventArgs(opponent));
+            await Clients.All.SendAsync(Constants.Events.PlayerUpdated, new PlayerUpdatedEventArgs(challenger));
+        }
+    }
 }
