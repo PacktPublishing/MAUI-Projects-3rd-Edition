@@ -7,7 +7,9 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.SignalRService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SticksAndStones.Handlers;
 using SticksAndStones.Messages;
+using SticksAndStones.Models;
 using SticksAndStones.Repository;
 using System;
 using System.Linq;
@@ -21,11 +23,15 @@ public class GameHub : ServerlessHub
     private readonly JsonSerializerOptions jsonOptions = new(JsonSerializerDefaults.Web);
 
     private readonly IDbContextFactory<GameDbContext> contextFactory;
+    private readonly ChallengeHandler challengeHandler;
 
-    public GameHub(IDbContextFactory<GameDbContext> dbContextFactory)
+
+    public GameHub(IDbContextFactory<GameDbContext> dbContextFactory, ChallengeHandler handler)
     {
         contextFactory = dbContextFactory;
+        challengeHandler = handler;
     }
+
 
     [FunctionName("Connect")]
     public async Task<IActionResult> Connect(
@@ -133,4 +139,68 @@ public class GameHub : ServerlessHub
                        select player).ToList();
         return new OkObjectResult(new GetAllPlayersResponse(players));
     }
+    
+    [FunctionName("IssueChallenge")]
+    public async Task<IssueChallengeResponse> IssueChallenge(
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = $"Challenge/Issue")] HttpRequest req,
+        ILogger log)
+    {
+        var result = await JsonSerializer.DeserializeAsync<IssueChallengeRequest>(req.Body, jsonOptions);
+
+        using var context = contextFactory.CreateDbContext();
+
+        Guid challengerId = result.Challenger.Id;
+        var challenger = (from p in context.Players
+                          where p.Id == challengerId
+                          select p).FirstOrDefault();
+
+        Guid opponentId = result.Opponent.Id;
+        var opponent = (from p in context.Players
+                        where p.Id == opponentId
+                        select p).FirstOrDefault();
+
+        if (challenger is null)
+            throw new ArgumentException(paramName: nameof(challenger), message: $"{challenger.GamerTag} is not a valid player.");
+        if (opponent is null)
+            throw new ArgumentException(paramName: nameof(opponent), message: $"{opponent.GamerTag} is not a valid player.");
+
+        var challengerInMatch = (from g in context.Matches
+                                where g.PlayerOneId == challengerId || g.PlayerTwoId == challengerId
+                                select g).Any();
+
+        var opponentInMatch = (from g in context.Matches
+                              where g.PlayerOneId == opponentId || g.PlayerTwoId == opponentId
+                              select g).Any();
+
+        if (challengerInMatch)
+            throw new ArgumentException(paramName: nameof(challenger), message: $"{challenger.GamerTag} is already in a match!");
+
+        if (opponentInMatch)
+            throw new ArgumentException(paramName: nameof(opponent), message: $"{opponent.GamerTag} is already in a match!");
+
+        Guid matchId = Guid.Empty;
+
+        log.LogInformation($"{challenger.GamerTag} has challenged {opponent.GamerTag} to a match!");
+
+        var challengeInfo = challengeHandler.CreateChallenge(challenger, opponent);
+        log.LogInformation($"Challenge [{challengeInfo.id}] has been created.");
+
+        log.LogInformation($"Waiting on response from {opponent.GamerTag} for challenge[{challengeInfo.id}].");
+        await Clients.User(opponent.Id.ToString()).SendAsync(Constants.Events.Challenge, new ChallengeEventArgs(challengeInfo.id, challenger, opponent));
+
+        ChallengeResponse response;
+        try
+        {
+            var challenge = await challengeInfo.responseTask.ConfigureAwait(false);
+            log.LogInformation($"Got response from {opponent.GamerTag} for challenge[{challengeInfo.id}].");
+            response = challenge.Response;
+        }
+        catch 
+        {
+            log.LogInformation($"Never received a response from {opponent.GamerTag} for challenge[{challengeInfo.id}], it timed out.");
+            response = ChallengeResponse.TimeOut;
+        }
+        return new(response);
+    }
+
 }

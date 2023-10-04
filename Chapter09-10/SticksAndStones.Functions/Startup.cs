@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using SticksAndStones.Handlers;
 using SticksAndStones.Repository;
 
 [assembly: FunctionsStartup(typeof(SticksAndStones.Startup))]
@@ -16,5 +17,7 @@ internal class Startup : FunctionsStartup
             {
                 options.UseInMemoryDatabase("SticksAndStones");
             });
+
+        builder.Services.AddSingleton<ChallengeHandler>();
     }
 }
