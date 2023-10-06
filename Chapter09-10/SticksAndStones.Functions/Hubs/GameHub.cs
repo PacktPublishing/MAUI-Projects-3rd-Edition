@@ -107,4 +107,30 @@ public class GameHub : ServerlessHub
         log.LogInformation("Sending response.");
         return new OkObjectResult(connectResponse);
     }
+
+    [FunctionName("GetAllPlayers")]
+    public IActionResult GetAllPlayers(
+    [HttpTrigger(AuthorizationLevel.Function, "get", Route = "Players/GetAll")] HttpRequest req,
+    ILogger log)
+    {
+        // Exclude the playerId if provided
+        Guid playerId = Guid.Empty;
+        if (req.Query.ContainsKey("id"))
+        {
+            string id = req.Query["id"];
+            if (!string.IsNullOrEmpty(id))
+            {
+                playerId = new Guid(id);
+            }
+        }
+
+        using var context = contextFactory.CreateDbContext();
+
+        // Get the set of available players
+        log.LogInformation("Getting the set of available players.");
+        var players = (from player in context.Players
+                       where player.Id != playerId
+                       select player).ToList();
+        return new OkObjectResult(new GetAllPlayersResponse(players));
+    }
 }
