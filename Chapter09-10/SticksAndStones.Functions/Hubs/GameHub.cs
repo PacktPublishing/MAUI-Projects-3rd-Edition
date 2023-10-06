@@ -250,4 +250,16 @@ public class GameHub : ServerlessHub
             await Clients.All.SendAsync(Constants.Events.PlayerUpdated, new PlayerUpdatedEventArgs(challenger));
         }
     }
+
+    [FunctionName("GetMatch")]
+    public IActionResult GetMatch(
+    [HttpTrigger(AuthorizationLevel.Function, "get", Route = "Match/{id}")] HttpRequest req,
+    Guid id,
+    ILogger log)
+    {
+        using var context = contextFactory.CreateDbContext();
+
+        Match match = (from m in context.Matches where m.Id == id select m).FirstOrDefault();
+        return new OkObjectResult(new GetMatchResponse(match));
+    }
 }
