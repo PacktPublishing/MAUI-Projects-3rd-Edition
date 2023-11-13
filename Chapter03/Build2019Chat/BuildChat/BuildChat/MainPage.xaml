@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="BuildChat.MainPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:BuildChat.Converters"
+    xmlns:local="clr-namespace:BuildChat"
+    BackgroundColor="White">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InverseBoolConverter x:Key="InverseBool" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <BoxView BackgroundColor="#2ac2c5" />
+        <Label
+            Margin="10"
+            FontSize="20"
+            HorizontalOptions="FillAndExpand"
+            HorizontalTextAlignment="Start"
+            Text="Microsoft //Build 2019 Chat"
+            TextColor="White" />
+        <Label
+            Margin="10"
+            FontSize="20"
+            HorizontalOptions="End"
+            HorizontalTextAlignment="Start"
+            Text="Close"
+            TextColor="White">
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding DisconnectCommand}" />
+            </Label.GestureRecognizers>
+        </Label>
+        <ListView
+            Grid.Row="1"
+            FlowDirection="RightToLeft"
+            HasUnevenRows="True"
+            ItemsSource="{Binding Messages}"
+            SeparatorVisibility="None"
+            VerticalOptions="End">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid>
+                            <Grid IsVisible="{Binding IsSystemMessage}">
+                                <Label
+                                    Margin="20,5"
+                                    FontSize="16"
+                                    HorizontalOptions="CenterAndExpand"
+                                    HorizontalTextAlignment="Center"
+                                    Text="{Binding Message}"
+                                    TextColor="#969daf" />
+                            </Grid>
+                            <Grid IsVisible="{Binding IsSystemMessage, Converter={StaticResource InverseBool}}">
+                                <Grid IsVisible="{Binding IsOwnMessage, Converter={StaticResource InverseBool}}" RowSpacing="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" />
+                                        <ColumnDefinition Width="5*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Label
+                                        Grid.Column="1"
+                                        Margin="10,0"
+                                        HorizontalOptions="End"
+                                        HorizontalTextAlignment="End"
+                                        Text="{Binding User}"
+                                        TextColor="#969daf" />
+                                    <Grid
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Margin="20,5"
+                                        Padding="10"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="FillAndExpand">
+                                        <BoxView
+                                            BackgroundColor="#f5f9fa"
+                                            CornerRadius="30"
+                                            HorizontalOptions="FillAndExpand" />
+                                        <Label
+                                            Margin="10"
+                                            LineBreakMode="CharacterWrap"
+                                            Text="{Binding Message}"
+                                            TextColor="#696f7f"
+                                            VerticalOptions="FillAndExpand" />
+                                    </Grid>
+                                </Grid>
+
+                                <Grid IsVisible="{Binding IsOwnMessage}" RowSpacing="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="5*" />
+                                        <ColumnDefinition Width="5*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Label
+                                        Margin="10,0"
+                                        HorizontalOptions="Start"
+                                        Text="{Binding User}"
+                                        TextColor="#969daf" />
+                                    <Grid
+                                        Grid.Row="1"
+                                        Margin="20,5"
+                                        Padding="10"
+                                        HorizontalOptions="Start"
+                                        VerticalOptions="FillAndExpand">
+                                        <BoxView
+                                            BackgroundColor="#2ac2c5"
+                                            CornerRadius="30"
+                                            HorizontalOptions="FillAndExpand" />
+                                        <Label
+                                            Margin="10"
+                                            LineBreakMode="CharacterWrap"
+                                            Text="{Binding Message}"
+                                            TextColor="White"
+                                            VerticalOptions="FillAndExpand" />
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Grid
+            Grid.Row="2"
+            ColumnSpacing="0"
+            RowSpacing="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="70" />
+            </Grid.ColumnDefinitions>
+            <Entry
+                BackgroundColor="#f5f9fa"
+                Placeholder="Message"
+                PlaceholderColor="#969daf"
+                Text="{Binding Message}"
+                TextColor="Black" />
+            <Button
+                Grid.Column="1"
+                BackgroundColor="#2ac2c5"
+                Command="{Binding SendMessageCommand}"
+                HorizontalOptions="FillAndExpand"
+                Text="Send"
+                VerticalOptions="FillAndExpand" />
+        </Grid>
+        <Grid
+            Grid.RowSpan="3"
+            BackgroundColor="#99FFFFFF"
+            IsVisible="{Binding IsConnected, Converter={StaticResource InverseBool}}">
+            <StackLayout
+                Margin="20,40"
+                BackgroundColor="White"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+                <Label
+                    HorizontalOptions="Center"
+                    Text="Your chat name:"
+                    TextColor="Black"
+                    VerticalOptions="Center" />
+                <Entry
+                    BackgroundColor="#f5f9fa"
+                    Placeholder="Name"
+                    PlaceholderColor="#969daf"
+                    Text="{Binding Name}"
+                    WidthRequest="150" />
+                <Button
+                    Grid.Column="1"
+                    BackgroundColor="#2ac2c5"
+                    Command="{Binding ConnectCommand}"
+                    HorizontalOptions="FillAndExpand"
+                    Text="Connect"
+                    VerticalOptions="FillAndExpand" />
+            </StackLayout>
+        </Grid>
+    </Grid>
+</ContentPage>
