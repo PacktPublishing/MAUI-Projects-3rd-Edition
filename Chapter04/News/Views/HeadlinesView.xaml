@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:News.Views"
+             xmlns:viewModels="clr-namespace:News.ViewModels"
+             xmlns:models="clr-namespace:News.Models"
+             x:Name="headlinesview"
+             x:Class="News.Views.HeadlinesView"
+             x:DataType="viewModels:HeadlinesViewModel"
+             Title="Home" Padding="14">
+    <CollectionView ItemsSource="{Binding CurrentNews.Articles}">
+        <CollectionView.EmptyView>
+            <Label Text="Loading" />
+        </CollectionView.EmptyView>
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="models:Article">
+                <ContentView>
+                    <ContentView.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding BindingContext.ItemSelectedCommand, Source={x:Reference headlinesview}}" CommandParameter="{Binding .}" />
+                    </ContentView.GestureRecognizers>
+                    <views:ArticleItem />
+                </ContentView>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+</ContentPage>
