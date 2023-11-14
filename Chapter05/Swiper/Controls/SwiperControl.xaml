@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Swiper.Controls.SwiperControl">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="100" />
+        </Grid.ColumnDefinitions>
+
+        <!-- ContentView for photo here -->
+        <ContentView x:Name="photo" Padding="40" Grid.ColumnSpan="3" >
+            <Grid x:Name="photoGrid" BackgroundColor="Black" Padding="1" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+
+                <BoxView Grid.RowSpan="2" Color="White" />
+
+                <Image x:Name="image" Margin="10" BackgroundColor="#AAAAAA" Aspect="AspectFill" />
+
+                <Label x:Name="loadingLabel" Text="Loading..." TextColor="White" FontSize="Large" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center" />
+
+                <Label Grid.Row="1" x:Name="descriptionLabel" Margin="10,0" Text="A picture of grandpa" FontFamily="Bradley Hand" />
+            </Grid>
+        </ContentView>
+
+        <!-- StackLayout for like here -->
+        <StackLayout x:Name="likeStackLayout" Grid.Column="2" Opacity="0" Padding="0, 100" HorizontalOptions="Center">
+            <Label Text="LIKE" TextColor="Lime" FontSize="30" Rotation="30" FontAttributes="Bold" />
+        </StackLayout>
+
+        <!-- StackLayout for deny here -->
+        <StackLayout x:Name="denyStackLayout" Opacity="0" Padding="0, 100" HorizontalOptions="Center">
+            <Label Text="DENY" TextColor="Red" FontSize="30" Rotation="-20" FontAttributes="Bold" />
+        </StackLayout>
+
+    </Grid>
+
+</ContentView>
