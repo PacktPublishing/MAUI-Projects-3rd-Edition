@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:HotdogOrNot.ViewModels"
+             x:Class="HotdogOrNot.Views.MainView"
+             x:DataType="viewModels:MainViewModel"
+             Title="Hotdog or Not hotdog">
+    <HorizontalStackLayout VerticalOptions="Center" HorizontalOptions="CenterAndExpand">
+        <Button Text="Take Photo" Command="{Binding TakePhotoCommand}" WidthRequest="150" HeightRequest="150" Margin="20" FontSize="Large"/>
+        <Button Text="Pick Photo" Command="{Binding PickPhotoCommand}" WidthRequest="150" HeightRequest="150" Margin="20" FontSize="Large"/>
+    </HorizontalStackLayout>
+</ContentPage>
