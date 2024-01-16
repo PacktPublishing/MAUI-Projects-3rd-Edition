@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:SticksAndStones.Converters"
+             xmlns:viewModels="clr-namespace:SticksAndStones.ViewModels"
+             xmlns:controls="clr-namespace:SticksAndStones.Controls"   
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"     
+             x:DataType="viewModels:MatchViewModel"
+             x:Class="SticksAndStones.Views.MatchView">
+
+    <ContentPage.Resources>
+        <ControlTemplate x:Key="StickViewControlTemplate">
+            <Grid Margin="0" Padding="0">
+                <Label Text="{TemplateBinding GamePiecePosition}" IsVisible="False" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" TextColor="Red" FontAttributes="Bold" >
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{TemplateBinding Path=GamePieceState}" Value="0">
+                            <Setter Property="IsVisible" Value="True" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+                <Border Padding="3" BackgroundColor="Transparent" StrokeShape="RoundRectangle 5" Stroke="Transparent">
+                    <Image Aspect="Fill">
+                        <Image.Triggers>
+                            <DataTrigger TargetType="Image" Binding="{TemplateBinding Path=GamePieceState}" Value="0">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Image" Binding="{TemplateBinding Path=GamePieceDirection}" Value="Horizontal">
+                                <Setter Property="Source" Value="hstick.jpeg" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Image" Binding="{TemplateBinding Path=GamePieceDirection}" Value="Vertical">
+                                <Setter Property="Source" Value="vstick.jpeg" />
+                            </DataTrigger>
+                        </Image.Triggers>
+                    </Image>
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border" Binding="{TemplateBinding GamePieceState}" Value="1" >
+                            <Setter Property="Stroke" Value="{StaticResource PlayerOne}" />
+                        </DataTrigger>
+                        <DataTrigger TargetType="Border" Binding="{TemplateBinding GamePieceState}" Value="-1" >
+                            <Setter Property="Stroke" Value="{StaticResource PlayerTwo}" />
+                        </DataTrigger>
+                    </Border.Triggers>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MatchViewModel}}, Path=SelectStickCommand}" CommandParameter="{TemplateBinding GamePiecePosition}" />
+                    </Border.GestureRecognizers>
+                </Border>
+            </Grid>
+        </ControlTemplate>
+        <ControlTemplate x:Key="StoneViewControlTemplate">
+            <Border Margin="3" Padding="5" HorizontalOptions="Center" VerticalOptions="Center" StrokeShape="RoundRectangle 5" StrokeThickness="3">
+                <Border.Triggers>
+                    <DataTrigger TargetType="Border" Binding="{TemplateBinding GamePieceState}" Value="0">
+                        <Setter Property="IsVisible" Value="False" />
+                    </DataTrigger>
+                    <DataTrigger TargetType="Border" Binding="{TemplateBinding GamePieceState}" Value="1" >
+                        <Setter Property="Stroke" Value="{StaticResource PlayerOne}" />
+                    </DataTrigger>
+                    <DataTrigger TargetType="Border" Binding="{TemplateBinding GamePieceState}" Value="-1" >
+                        <Setter Property="Stroke" Value="{StaticResource PlayerTwo}" />
+                    </DataTrigger>
+                </Border.Triggers>
+                <Image Source="stones.jpeg" Aspect="Fill" />
+            </Border>
+        </ControlTemplate>
+        <Style x:Key="dotLabel"
+        TargetType="Label">
+            <Setter Property="Text" Value="&#x26AB;" />
+            <Setter Property="HorizontalOptions" Value="Center" />
+            <Setter Property="VerticalOptions" Value="Center" />
+        </Style>
+        <Style TargetType="controls:GamePieceView"
+        Class="Stick">
+            <Setter Property="ControlTemplate"
+            Value="{StaticResource StickViewControlTemplate}" />
+        </Style>
+        <Style TargetType="controls:GamePieceView"
+        Class="Stone">
+            <Setter Property="ControlTemplate"
+            Value="{StaticResource StoneViewControlTemplate}" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Shell.TitleView>
+        <Grid>
+            <HorizontalStackLayout HorizontalOptions="Start">
+                <ImageButton Command="{Binding ForfeitCommand}" ToolTipProperties.Text="Return to the Lobby.">
+                    <ImageButton.Source>
+                        <FontImageSource Glyph="&#xf0a8;" FontFamily="FontAwesome" Color="White" Size="28" />
+                    </ImageButton.Source>
+                </ImageButton>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout HorizontalOptions="End">
+                <ImageButton Command="{Binding UndoCommand}" IsVisible="{Binding IsCurrentPlayersTurn}" ToolTipProperties.Text="Undo the last stick placement." >
+                    <ImageButton.Source>
+                        <FontImageSource Glyph="&#xf0e2;" FontFamily="FontAwesome" Color="White" Size="28" />
+                    </ImageButton.Source>
+                </ImageButton>
+                <ImageButton Command="{Binding PlayCommand}" IsVisible="{Binding IsCurrentPlayersTurn}" ToolTipProperties.Text="Send the stick placement, and end my turn.">
+                    <ImageButton.Source>
+                        <FontImageSource Glyph="&#xf1d8;" FontFamily="FontAwesome" Color="White" Size="28" />
+                    </ImageButton.Source>
+                </ImageButton>
+            </HorizontalStackLayout>
+        </Grid>
+    </Shell.TitleView>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="6*" />
+            <RowDefinition Height="2*" />
+        </Grid.RowDefinitions>
+
+        <HorizontalStackLayout Grid.Row="0" HorizontalOptions="CenterAndExpand" Margin="10"
+                       BindableLayout.ItemsSource="{Binding Players}">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+                    <Border x:DataType="viewModels:MatchPlayerViewModel" Padding="0" Margin="2" StrokeShape="RoundRectangle 10,10,10,10" HeightRequest="175">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding PlayerToken}" Value="1" >
+                                <Setter Property="Stroke" Value="{StaticResource PlayerOne}" />
+                                <Setter Property="BackgroundColor" Value="{StaticResource PlayerOne}" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Border" Binding="{Binding PlayerToken}" Value="-1" >
+                                <Setter Property="Stroke" Value="{StaticResource PlayerTwo}" />
+                                <Setter Property="BackgroundColor" Value="{StaticResource PlayerTwo}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+
+                        <VerticalStackLayout Padding="2" HorizontalOptions="Center">
+                            <VerticalStackLayout Margin="0,0,0,10">
+                                <Label Text="{Binding GamerTag}" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" FontSize="18" FontFamily="OpenSansSemibold"/>
+                                <FlexLayout Margin="3" HorizontalOptions="CenterAndExpand">
+                                    <toolkit:AvatarView FlexLayout.Order="0" Margin="0" BackgroundColor="LightGrey" HeightRequest="85" WidthRequest="85" CornerRadius="50" VerticalOptions="Center" HorizontalOptions="Center">
+                                        <toolkit:AvatarView.ImageSource>
+                                            <toolkit:GravatarImageSource
+                                                Email="{Binding EmailAddress}"
+                                                Image="MysteryPerson" />
+                                        </toolkit:AvatarView.ImageSource>
+                                        <toolkit:AvatarView.Triggers>
+                                            <DataTrigger TargetType="toolkit:AvatarView" Binding="{Binding Path=PlayerToken}" Value="-1">
+                                                <Setter Property="FlexLayout.Order" Value="1" />
+                                            </DataTrigger>
+                                        </toolkit:AvatarView.Triggers>
+                                    </toolkit:AvatarView>
+                                    <Label FlexLayout.Order="1" Text="{Binding Score}" FontSize="48" Padding="5" MinimumWidthRequest="65" HorizontalTextAlignment="Center">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding Path=PlayerToken}" Value="-1">
+                                                <Setter Property="FlexLayout.Order" Value="0" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </FlexLayout>
+                            </VerticalStackLayout>
+                            <Border Padding="0" WidthRequest="96" StrokeShape="RoundRectangle 10,10,10,10" StrokeThickness="0" IsVisible="{Binding IsPlayersTurn}">
+                                <Image Source="hstick.jpeg" Aspect="AspectFit" MaximumHeightRequest="36"/>
+                            </Border>
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </HorizontalStackLayout>
+
+        <Label Grid.Row="1" Margin="5" HorizontalTextAlignment="Center" Text="Tap on a red number to place your stick at that position. Then tap the Send button to complete your turn" IsVisible="{Binding Path=IsCurrentPlayersTurn}"/>
+
+        <Grid Grid.Row="2" BackgroundColor="White" Margin="10,40,10,0" MaximumHeightRequest="500" MaximumWidthRequest="500">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="4*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="4*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="4*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+
+            <!-- Corners -->
+            <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="0" Grid.Column="2" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="0" Grid.Column="4" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="0" Grid.Column="6" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="2" Grid.Column="2" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="2" Grid.Column="4" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="2" Grid.Column="6" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="4" Grid.Column="0" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="4" Grid.Column="2" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="4" Grid.Column="4" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="4" Grid.Column="6" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="6" Grid.Column="0" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="6" Grid.Column="2" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="6" Grid.Column="4" Style="{StaticResource dotLabel}" />
+            <Label Grid.Row="6" Grid.Column="6" Style="{StaticResource dotLabel}" />
+
+            <!-- Sticks -->
+            <controls:GamePieceView Grid.Row="0" Grid.Column="1" StyleClass="Stick" 
+                        GamePiecePosition="01" GamePieceState="{Binding Match.Sticks[0]}" GamePieceDirection="Horizontal" />
+
+            <controls:GamePieceView Grid.Row="0" Grid.Column="3" StyleClass="Stick" 
+                        GamePiecePosition="02" GamePieceState="{Binding Match.Sticks[1]}" GamePieceDirection="Horizontal" />
+
+            <controls:GamePieceView Grid.Row="0" Grid.Column="5" StyleClass="Stick" 
+                        GamePiecePosition="03" GamePieceState="{Binding Match.Sticks[2]}" GamePieceDirection="Horizontal" />
+
+            <controls:GamePieceView Grid.Row="1" Grid.Column="0" StyleClass="Stick" 
+                        GamePiecePosition="04" GamePieceState="{Binding Match.Sticks[3]}" GamePieceDirection="Vertical" />
+
+            <controls:GamePieceView Grid.Row="1" Grid.Column="2" StyleClass="Stick" 
+                        GamePiecePosition="05" GamePieceState="{Binding Match.Sticks[4]}" GamePieceDirection="Vertical" />
+
+            <controls:GamePieceView Grid.Row="1" Grid.Column="4" StyleClass="Stick" 
+                        GamePiecePosition="06" GamePieceState="{Binding Match.Sticks[5]}" GamePieceDirection="Vertical" />
+
+            <controls:GamePieceView Grid.Row="1" Grid.Column="6" StyleClass="Stick"
+                        GamePiecePosition="07" GamePieceState="{Binding Match.Sticks[6]}" GamePieceDirection="Vertical" />
+
+            <controls:GamePieceView Grid.Row="2" Grid.Column="1" StyleClass="Stick"
+                        GamePiecePosition="08" GamePieceState="{Binding Match.Sticks[7]}" GamePieceDirection="Horizontal" />
+
+            <controls:GamePieceView Grid.Row="2" Grid.Column="3" StyleClass="Stick"
+                        GamePiecePosition="09" GamePieceState="{Binding Match.Sticks[8]}" GamePieceDirection="Horizontal" />
+
+            <controls:GamePieceView Grid.Row="2" Grid.Column="5" StyleClass="Stick"
+                        GamePiecePosition="10" GamePieceState="{Binding Match.Sticks[9]}" GamePieceDirection="Horizontal" />
+
+            <controls:GamePieceView Grid.Row="3" Grid.Column="0" StyleClass="Stick"
+                        GamePiecePosition="11" GamePieceState="{Binding Match.Sticks[10]}" GamePieceDirection="Vertical" />
+
+            <controls:GamePieceView Grid.Row="3" Grid.Column="2" StyleClass="Stick"
+                        GamePiecePosition="12" GamePieceState="{Binding Match.Sticks[11]}" GamePieceDirection="Vertical" />
+
+            <controls:GamePieceView Grid.Row="3" Grid.Column="4" StyleClass="Stick"
+                        GamePiecePosition="13" GamePieceState="{Binding Match.Sticks[12]}" GamePieceDirection="Vertical" />
+
+            <controls:GamePieceView Grid.Row="3" Grid.Column="6" StyleClass="Stick"
+                        GamePiecePosition="14" GamePieceState="{Binding Match.Sticks[13]}" GamePieceDirection="Vertical" />
+
+            <controls:GamePieceView Grid.Row="4" Grid.Column="1" StyleClass="Stick"
+                        GamePiecePosition="15" GamePieceState="{Binding Match.Sticks[14]}" GamePieceDirection="Horizontal" />
+
+            <controls:GamePieceView Grid.Row="4" Grid.Column="3" StyleClass="Stick"
+                        GamePiecePosition="16" GamePieceState="{Binding Match.Sticks[15]}" GamePieceDirection="Horizontal" />
+
+            <controls:GamePieceView Grid.Row="4" Grid.Column="5" StyleClass="Stick" 
+                        GamePiecePosition="17" GamePieceState="{Binding Match.Sticks[16]}" GamePieceDirection="Horizontal" />
+
+            <controls:GamePieceView Grid.Row="5" Grid.Column="0" StyleClass="Stick"
+                        GamePiecePosition="18" GamePieceState="{Binding Match.Sticks[17]}" GamePieceDirection="Vertical" />
+
+            <controls:GamePieceView Grid.Row="5" Grid.Column="2" StyleClass="Stick"
+                        GamePiecePosition="19" GamePieceState="{Binding Match.Sticks[18]}" GamePieceDirection="Vertical" />
+
+            <controls:GamePieceView Grid.Row="5" Grid.Column="4" StyleClass="Stick"
+                        GamePiecePosition="20" GamePieceState="{Binding Match.Sticks[19]}" GamePieceDirection="Vertical" />
+
+            <controls:GamePieceView Grid.Row="5" Grid.Column="6" StyleClass="Stick" 
+                        GamePiecePosition="21" GamePieceState="{Binding Match.Sticks[20]}" GamePieceDirection="Vertical" />
+
+            <controls:GamePieceView Grid.Row="6" Grid.Column="1" StyleClass="Stick"
+                        GamePiecePosition="22" GamePieceState="{Binding Match.Sticks[21]}" GamePieceDirection="Horizontal" />
+
+            <controls:GamePieceView Grid.Row="6" Grid.Column="3" StyleClass="Stick"
+                        GamePiecePosition="23" GamePieceState="{Binding Match.Sticks[22]}" GamePieceDirection="Horizontal" />
+
+            <controls:GamePieceView Grid.Row="6" Grid.Column="5" StyleClass="Stick" 
+                        GamePiecePosition="24" GamePieceState="{Binding Match.Sticks[23]}" GamePieceDirection="Horizontal" />
+
+            <!-- Stones -->
+            <controls:GamePieceView Grid.Row="1" Grid.Column="1" StyleClass="Stone" GamePieceState="{Binding Match.Stones[0]}" />
+            <controls:GamePieceView Grid.Row="1" Grid.Column="3" StyleClass="Stone" GamePieceState="{Binding Match.Stones[1]}" />
+            <controls:GamePieceView Grid.Row="1" Grid.Column="5" StyleClass="Stone" GamePieceState="{Binding Match.Stones[2]}" />
+            <controls:GamePieceView Grid.Row="3" Grid.Column="1" StyleClass="Stone" GamePieceState="{Binding Match.Stones[3]}" />
+            <controls:GamePieceView Grid.Row="3" Grid.Column="3" StyleClass="Stone" GamePieceState="{Binding Match.Stones[4]}" />
+            <controls:GamePieceView Grid.Row="3" Grid.Column="5" StyleClass="Stone" GamePieceState="{Binding Match.Stones[5]}" />
+            <controls:GamePieceView Grid.Row="5" Grid.Column="1" StyleClass="Stone" GamePieceState="{Binding Match.Stones[6]}" />
+            <controls:GamePieceView Grid.Row="5" Grid.Column="3" StyleClass="Stone" GamePieceState="{Binding Match.Stones[7]}" />
+            <controls:GamePieceView Grid.Row="5" Grid.Column="5" StyleClass="Stone" GamePieceState="{Binding Match.Stones[8]}" />
+        </Grid>
+    </Grid>
+</ContentPage>

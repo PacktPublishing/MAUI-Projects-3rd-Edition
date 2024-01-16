@@ -5,7 +5,9 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SticksAndStones.Functions", "SticksAndStones.Functions\SticksAndStones.Functions.csproj", "{F7BA2341-6847-43BE-B066-D992F081F183}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SticksAndStones.Shared", "SticksAndStones.Shared\SticksAndStones.Shared.csproj", "{531D2C7F-0B60-47A8-B703-D37086C956A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SticksAndStones.Shared", "SticksAndStones.Shared\SticksAndStones.Shared.csproj", "{531D2C7F-0B60-47A8-B703-D37086C956A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SticksAndStones.App", "SticksAndStones.App\SticksAndStones.App.csproj", "{59D390E0-A338-40DB-9178-7AD99819DC1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,12 @@ Global
 		{531D2C7F-0B60-47A8-B703-D37086C956A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{531D2C7F-0B60-47A8-B703-D37086C956A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{531D2C7F-0B60-47A8-B703-D37086C956A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59D390E0-A338-40DB-9178-7AD99819DC1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59D390E0-A338-40DB-9178-7AD99819DC1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59D390E0-A338-40DB-9178-7AD99819DC1A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{59D390E0-A338-40DB-9178-7AD99819DC1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59D390E0-A338-40DB-9178-7AD99819DC1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59D390E0-A338-40DB-9178-7AD99819DC1A}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

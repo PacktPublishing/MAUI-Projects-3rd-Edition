@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Frame xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       x:Class="SticksAndStones.Controls.ActivityButton"
+       x:Name="this"
+       BackgroundColor="{x:StaticResource Primary}"
+       CornerRadius="5"
+       Padding="12">
+    <VerticalStackLayout>
+        <HorizontalStackLayout HorizontalOptions="CenterAndExpand" Spacing="10">
+            <ActivityIndicator HeightRequest="15" WidthRequest="15"
+                               Color="{x:StaticResource White}" 
+                               IsRunning="{Binding Source={x:Reference this},Path=IsRunning}"
+                               IsVisible="{Binding Source={x:Reference this},Path=IsRunning}"
+                               VerticalOptions="CenterAndExpand"/>
+            <Label x:Name="buttonLabel" TextColor="{x:StaticResource White}" 
+                   Text="{Binding Source={x:Reference this},Path=Text}"
+                   FontSize="15"
+                   VerticalOptions="CenterAndExpand"
+                   VerticalTextAlignment="Center" 
+                   HorizontalTextAlignment="Start"/>            
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+    <Frame.GestureRecognizers>
+        <TapGestureRecognizer Command="{Binding Source={x:Reference this},Path=Command}" CommandParameter="{Binding Source={x:Reference this},Path=CommandParameter}" />
+    </Frame.GestureRecognizers>
+    <Frame.Triggers>
+        <DataTrigger TargetType="Frame" Binding="{Binding Source={x:Reference this},Path=IsRunning}" Value="True">
+            <Setter Property="IsEnabled" Value="False" />
+        </DataTrigger>
+        <DataTrigger TargetType="Frame" Binding="{Binding Source={x:Reference this},Path=IsRunning}" Value="False">
+            <Setter Property="IsEnabled" Value="True" />
+        </DataTrigger>
+    </Frame.Triggers>    
+</Frame>
