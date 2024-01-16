@@ -1,0 +1,67 @@
+﻿
+.keypad {
+    width: 300px;
+    margin: auto;
+    margin-top: -1.1em;
+}
+
+.keypad-body {
+    border: solid 1px #3A4655;
+}
+
+.keypad-row {
+    width: 100%;
+    background: #3C4857;
+}
+
+.keypad-button {
+    width: 25%;
+    background: #425062;
+    color: #fff;
+    padding: 20px;
+    display: inline-block;
+    font-size: 25px;
+    text-align: center;
+    vertical-align: middle;
+    margin-right: -4px;
+    border-right: solid 2px #3C4857;
+    border-bottom: solid 2px #3C4857;
+    transition: all 0.2s ease-in-out;
+}
+
+    .keypad-button.operator {
+        color: #AEB3BA;
+        background: #404D5E;
+    }
+
+    .keypad-button.command {
+        color: #D95D4E;
+        background: #404D5E;
+    }
+
+    .keypad-button:hover {
+        background: #E0B612;
+    }
+
+    .keypad-button.command:hover,
+    .keypad-button.operator:hover {
+        background: #E0B612;
+        color: #fff;
+    }
+
+    .keypad-button.wide {
+        width: 50%;
+    }
+
+.keypad-screen {
+    background: #3A4655;
+    width: 100%;
+    height: 75px;
+    padding: 20px;
+}
+
+.keypad-typed {
+    font-size: 45px;
+    text-align: right;
+    color: #fff;
+}

@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Calculator"
+             xmlns:viewModels="clr-namespace:Calculator.ViewModels"
+             x:Class="Calculator.MainPage"
+             x:DataType="viewModels:MainPageViewModel"
+             >
+    <Grid BackgroundColor="Black">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        
+        <ScrollView Grid.Row="0" BackgroundColor="Bisque" WidthRequest="400" VerticalScrollBarVisibility="Always">
+            <CollectionView ItemsSource="{Binding Results}" ItemsUpdatingScrollMode="KeepLastItemInView">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="viewModels:Calculation">
+                        <SwipeView>
+                            <SwipeView.LeftItems>
+                                <SwipeItems Mode="Execute">
+                                    <SwipeItem Text="Recall"                                           
+                                               BackgroundColor="LightPink"
+                                               Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainPageViewModel}}, Path=RecallCommand}" 
+                                               CommandParameter="{Binding}">
+                                    </SwipeItem>
+                                </SwipeItems>
+                            </SwipeView.LeftItems>
+                            <VerticalStackLayout>
+                                <HorizontalStackLayout Padding="10" HorizontalOptions="EndAndExpand">
+                                    <Label Text="{Binding Expression}" FontSize="Large" TextColor="Black" HorizontalTextAlignment="End" HorizontalOptions="EndAndExpand"/>
+                                    <Label Text="=" TextColor="Blue" FontSize="Large" HorizontalTextAlignment="End" HorizontalOptions="EndAndExpand"/>
+                                    <Label Text="{Binding Result}" FontSize="Large" TextColor="Black" HorizontalTextAlignment="End" HorizontalOptions="EndAndExpand"/>
+                                </HorizontalStackLayout>
+                                <Line Stroke="LightSlateGray" X2="400" />
+                                <Line Stroke="Black" X2="400" />
+                            </VerticalStackLayout>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
+
+        <BlazorWebView Grid.Row="1" x:Name="blazorWebView" HostPage="wwwroot/index.html" HeightRequest="540">
+            <BlazorWebView.RootComponents>
+                <RootComponent Selector="#app" ComponentType="{x:Type local:Main}" />
+            </BlazorWebView.RootComponents>
+        </BlazorWebView>
+    </Grid>
+</ContentPage>
