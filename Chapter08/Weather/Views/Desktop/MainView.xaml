@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:behaviors="clr-namespace:Weather.Behaviors" 
+             x:Class="Weather.Views.Desktop.MainView"
+             Title="{Binding City}">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Refresh" IconImageSource="refresh.png" Command="{Binding RefreshCommand}" />
+    </ContentPage.ToolbarItems>
+    <Grid>
+        <Image Aspect="AspectFill">
+            <Image.Source>
+                <UriImageSource Uri="https://upload.wikimedia.org/wikipedia/commons/7/79/Solnedg%C3%A5ng_%C3%B6ver_Laholmsbukten_augusti_2011.jpg" CachingEnabled="true" CacheValidity="1" />
+            </Image.Source>
+        </Image>
+        <ScrollView BackgroundColor="Transparent">
+            <FlexLayout BindableLayout.ItemsSource="{Binding Days}" Direction="Column" Wrap="NoWrap" Grow="0.0" Shrink="0.0">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup>
+                                    <VisualState Name="Portrait">
+                                        <VisualState.Setters>
+                                            <Setter Property="WidthRequest" Value="150" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState Name="Landscape">
+                                        <VisualState.Setters>
+                                            <Setter Property="WidthRequest" Value="200" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentView Padding="10" BackgroundColor="#9F5010">
+                                <Label Text="{Binding DateAsString}" TextColor="White" FontAttributes="Bold" />
+                            </ContentView>
+                                <FlexLayout BindableLayout.ItemsSource="{Binding Items}" Wrap="Wrap" JustifyContent="Start" AlignItems="Start" FlexLayout.Grow="1">
+                                    <FlexLayout.Behaviors>
+                                        <behaviors:FlexLayoutBehavior />
+                                    </FlexLayout.Behaviors>
+
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackLayout Margin="10" Padding="20" WidthRequest="150" BackgroundColor="#99FFFFFF">
+                                                <Label FontSize="16" FontAttributes="Bold" Text="{Binding TimeAsString}" HorizontalOptions="Center" />
+                                                <Image WidthRequest="100" HeightRequest="100" Aspect="AspectFit" HorizontalOptions="Center" Source="{Binding Icon}">
+                                                    <VisualStateManager.VisualStateGroups>
+                                                        <VisualStateGroup>
+                                                            <VisualState Name="Portrait">
+                                                                <VisualState.Setters>
+                                                                    <Setter Property="WidthRequest" Value="100" />
+                                                                    <Setter Property="HeightRequest" Value="100" />
+                                                                </VisualState.Setters>
+                                                            </VisualState>
+                                                            <VisualState Name="Landscape">
+                                                                <VisualState.Setters>
+                                                                    <Setter Property="WidthRequest" Value="150" />
+                                                                    <Setter Property="HeightRequest" Value="150" />
+                                                                </VisualState.Setters>
+                                                            </VisualState>
+                                                        </VisualStateGroup>
+                                                    </VisualStateManager.VisualStateGroups>
+                                                </Image>
+                                                <Label FontSize="14" FontAttributes="Bold" Text="{Binding Temperature, StringFormat='{0}° C'}" HorizontalOptions="Center" />
+                                                <Label FontSize="14" FontAttributes="Bold" Text="{Binding Description}" HorizontalOptions="Center" />
+                                            </StackLayout>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </FlexLayout>
+                        </StackLayout>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
+        </ScrollView>
+        <Border IsVisible="{Binding IsRefreshing}" BackgroundColor="#99FFFFFF" WidthRequest="100" HeightRequest="100" VerticalOptions="Center" HorizontalOptions="Center">
+            <ActivityIndicator Color="Black" IsRunning="True" />
+        </Border>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,28 @@
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:DoToo"
+             x:Class="DoToo.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary>
+                <Style TargetType="NavigationPage">
+                    <Setter Property="BarBackgroundColor" Value="#A25EBB" />
+                    <Setter Property="BarTextColor" Value="#FFFFFF" />
+                </Style>
+                <Style x:Key="FilterButton" TargetType="Button">
+                    <Setter Property="Margin" Value="15" />
+                    <Setter Property="BorderWidth" Value="1" />
+                    <Setter Property="BorderColor" Value="Silver" />
+                    <Setter Property="TextColor" Value="Black" />
+                </Style>
+                <Color x:Key="CompletedColor">#1C8859</Color>
+                <Color x:Key="ActiveColor">#D3D3D3</Color>
+            </ResourceDictionary>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

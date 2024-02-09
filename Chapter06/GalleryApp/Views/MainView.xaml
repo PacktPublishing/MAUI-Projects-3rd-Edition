@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:GalleryApp.Converters"
+             xmlns:viewModels="clr-namespace:GalleryApp.ViewModels"
+             xmlns:models="clr-namespace:GalleryApp.Models"
+             x:Class="GalleryApp.Views.MainView"
+             x:DataType="viewModels:MainViewModel"
+             Title="My Photos">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BytesToImageConverter x:Key="ToImage" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="20" />
+        </Grid.RowDefinitions>
+
+        <CarouselView ItemsSource="{Binding Recent}" PeekAreaInsets="40,0,40,0" >
+            <CarouselView.ItemsLayout>
+                <LinearItemsLayout Orientation="Horizontal"  SnapPointsAlignment="Start" SnapPointsType="Mandatory" />
+            </CarouselView.ItemsLayout>
+            <CarouselView.ItemTemplate>
+                <DataTemplate x:DataType="models:Photo">
+                    <Image Source="{Binding Bytes, Converter={StaticResource ToImage}}" Aspect="AspectFill" />
+                </DataTemplate>
+            </CarouselView.ItemTemplate>
+        </CarouselView>
+
+        <Label Grid.Row="1" Margin="10" Text="Favorites" FontSize="Subtitle" FontAttributes="Bold" />
+        <CarouselView Grid.Row="2" ItemsSource="{Binding Favorites}" PeekAreaInsets="0,0,40,0" IndicatorView="Indicator">
+            <CarouselView.ItemsLayout>
+                <LinearItemsLayout Orientation="Horizontal" SnapPointsAlignment="Start" SnapPointsType="MandatorySingle" />
+            </CarouselView.ItemsLayout>
+            <CarouselView.EmptyViewTemplate>
+                <DataTemplate>
+                    <Label Text="No favorites selected" />
+                </DataTemplate>
+            </CarouselView.EmptyViewTemplate>
+            <CarouselView.ItemTemplate>
+                <DataTemplate x:DataType="models:Photo">
+                    <Border Grid.RowSpan="2" StrokeShape="RoundRectangle 15,15,15,15" Padding="0" Margin="0,0,0,0" BackgroundColor="#667788" >
+                        <Image Source="{Binding Bytes, Converter={StaticResource ToImage}}" Aspect="AspectFill" />
+                    </Border>
+                </DataTemplate>
+            </CarouselView.ItemTemplate>
+        </CarouselView>
+        <IndicatorView Grid.Row="3" x:Name="Indicator" HorizontalOptions="Center" SelectedIndicatorColor="Red" IndicatorColor="LightGray" />
+    </Grid>
+</ContentPage>

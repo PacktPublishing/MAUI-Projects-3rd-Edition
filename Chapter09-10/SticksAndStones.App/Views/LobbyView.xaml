@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:SticksAndStones.ViewModels"
+             xmlns:controls="clr-namespace:SticksAndStones.Controls"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:DataType="viewModels:LobbyViewModel"
+             x:Class="SticksAndStones.Views.LobbyView"
+             Title="Lobby"
+             BackgroundColor="White">
+
+    <ContentPage.Resources>
+        <ContentView x:Key="BasicEmptyView">
+            <StackLayout>
+                <Label Text="No players available"
+                   Margin="10,25,10,10"
+                   FontAttributes="Bold"
+                   FontSize="18"
+                   HorizontalOptions="Fill"
+                   HorizontalTextAlignment="Center" />
+            </StackLayout>
+        </ContentView>
+
+        <DataTemplate x:Key="PlayerCardViewTemplate" x:DataType="viewModels:PlayerViewModel">
+            <ContentView>
+                <Border StrokeShape="RoundRectangle 10,10,10,10" BackgroundColor="AntiqueWhite" Padding="3,3,3,3" Margin="5,5,5,5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="4*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+                        <toolkit:AvatarView Grid.Column="0" Margin="0" BackgroundColor="LightGrey" HeightRequest="48" WidthRequest="48" CornerRadius="25" VerticalOptions="Center" HorizontalOptions="Center">
+                            <toolkit:AvatarView.ImageSource>
+                                <toolkit:GravatarImageSource
+                                    Email="{Binding EmailAddress}"
+                                    Image="MysteryPerson" />
+                            </toolkit:AvatarView.ImageSource>
+                        </toolkit:AvatarView>
+                        <VerticalStackLayout Grid.Column="1" Margin="10,0,0,0">
+                            <Label Text="{Binding GamerTag}" HorizontalTextAlignment="Start" FontSize="Large" BackgroundColor="AntiqueWhite" />
+                            <Label Text="{Binding Status}" HorizontalTextAlignment="Start" FontSize="Caption" BackgroundColor="AntiqueWhite"/>
+                        </VerticalStackLayout>
+                        <controls:ActivityButton Grid.Column="2" IsRunning="{Binding IsChallenging}" Text="{Binding ChallengeStatus}" BackgroundColor="#e8bc65" Command="{Binding ChallengeCommand}" CommandParameter="{Binding .}" IsVisible="{Binding CanChallenge}" Margin="5"/>
+                    </Grid>
+                </Border>
+            </ContentView>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
+        <ScrollView Padding="5">
+            <!-- Have to use a StaticResource for EmptyView due to https://github.com/dotnet/maui/issues/7262 -->
+            <CollectionView ItemsSource="{Binding Players}" Margin="5,5,5,0" SelectionMode="None"
+                            EmptyView="{StaticResource BasicEmptyView}"
+                            ItemTemplate="{StaticResource PlayerCardViewTemplate}">
+            </CollectionView>
+        </ScrollView>
+    </RefreshView>
+</ContentPage>

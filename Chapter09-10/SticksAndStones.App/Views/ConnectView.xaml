@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:SticksAndStones.ViewModels"
+             xmlns:controls="clr-namespace:SticksAndStones.Controls"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="SticksAndStones.Views.ConnectView"
+             x:DataType="viewModels:ConnectViewModel"
+             Title="Sticks &amp; Stones"
+             NavigationPage.HasNavigationBar="False">
+       
+    <Grid Margin="40">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="8*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="8*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0" WidthRequest="150" HeightRequest="150">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="4*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+
+            <Image Grid.Row="0" Grid.Column="1" Source="hstick.jpeg" Aspect="Fill"/>
+            <Image Grid.Row="1" Grid.Column="0" Source="vstick.jpeg" Aspect="Fill"/>
+            <Image Grid.Row="1" Grid.Column="1" Source="stones.jpeg" Aspect="AspectFit"/>
+            <Image Grid.Row="1" Grid.Column="2" Source="vstick.jpeg" Aspect="Fill"/>
+            <Image Grid.Row="2" Grid.Column="1" Source="hstick.jpeg" Aspect="Fill"/>
+        </Grid>
+
+        <Label Grid.Row="1" Text="Connect to Sticks &amp; Stones" FontSize="20" TextColor="Black" FontAttributes="Bold" Margin="0,0,0,20" HorizontalOptions="Center"/>
+
+        <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center">
+            <VerticalStackLayout Spacing="10" >
+                <Image HeightRequest="96" WidthRequest="96" BackgroundColor="LightGrey">
+                    <Image.Source>
+                        <toolkit:GravatarImageSource
+                            Email="{Binding EmailAddress}"
+                            Image="MysteryPerson" />
+                    </Image.Source>
+                </Image>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="10" WidthRequest="220">
+                <Entry Placeholder="gamertag" Keyboard="Email" Text="{Binding GamerTag}" HorizontalTextAlignment="Start" HorizontalOptions="FillAndExpand"/>
+                <Entry Placeholder="user@someaddress.com" Keyboard="Email" Text="{Binding EmailAddress}" HorizontalTextAlignment="Start" HorizontalOptions="FillAndExpand"/>
+            </VerticalStackLayout>
+        </HorizontalStackLayout>
+
+        <controls:ActivityButton Grid.Row="3" 
+                                 IsRunning="{Binding IsConnecting}" 
+                                 Text="{Binding ConnectStatus}" 
+                                 BackgroundColor="#e8bc65" 
+                                 Command="{Binding ConnectCommand}" 
+                                 HorizontalOptions="Center" WidthRequest="200" HeightRequest="48"/>
+
+    </Grid>
+
+</ContentPage>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="SticksAndStones.App.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SticksAndStones.App"
+    xmlns:views="clr-namespace:SticksAndStones.Views"
+    Shell.FlyoutBehavior="Disabled">
+
+    <ShellItem Route="Connect">
+        <ShellContent ContentTemplate="{DataTemplate views:ConnectView}" />
+    </ShellItem>
+
+    <ShellItem Route="Lobby">
+        <ShellContent ContentTemplate="{DataTemplate views:LobbyView}" />
+    </ShellItem>
+
+    <ShellItem Route="Match">
+        <ShellContent ContentTemplate="{DataTemplate views:MatchView}" />
+    </ShellItem>
+</Shell>

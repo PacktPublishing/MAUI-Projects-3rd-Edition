@@ -1,0 +1,129 @@
+﻿@page "/"
+@inject Compute compute
+@inject Calculations calculations
+@inject IMessenger messagingCenter
+
+<div class="keypad">
+    <div class="keypad-body">
+        <div class="keypad-screen">
+            <div class="keypad-typed">@inputDisplay</div>
+        </div>
+        <div class="keypad-row">
+            <div class="keypad-button wide command" @onclick="ClearInput">C</div>
+            <div class="keypad-button command" @onclick="ClearAll">CE</div>
+            <div class="keypad-button operator" @onclick="@(()=>AppendInput("/"))" >/</div>
+        </div>
+        <div class="keypad-row">
+            <div class="keypad-button" @onclick="@(()=>AppendInput("7"))">7</div>
+            <div class="keypad-button" @onclick="@(()=>AppendInput("8"))">8</div>
+            <div class="keypad-button" @onclick="@(()=>AppendInput("9"))">9</div>
+            <div class="keypad-button operator" @onclick="@(()=>AppendInput("X"))">X</div>
+        </div>
+        <div class="keypad-row">
+            <div class="keypad-button" @onclick="@(()=>AppendInput("4"))">4</div>
+            <div class="keypad-button" @onclick="@(()=>AppendInput("5"))">5</div>
+            <div class="keypad-button" @onclick="@(()=>AppendInput("6"))">6</div>
+            <div class="keypad-button operator" @onclick="@(()=>AppendInput("-"))">−</div>
+        </div>
+        <div class="keypad-row">
+            <div class="keypad-button" @onclick="@(()=>AppendInput("1"))">1</div>
+            <div class="keypad-button" @onclick="@(()=>AppendInput("2"))">2</div>
+            <div class="keypad-button" @onclick="@(()=>AppendInput("3"))">3</div>
+            <div class="keypad-button operator" @onclick="@(()=>AppendInput("+"))">+</div>
+        </div>
+        <div class="keypad-row">
+            <div class="keypad-button" @onclick="@(()=>AppendInput("."))">.</div>
+            <div class="keypad-button" @onclick="@(()=>AppendInput("0"))">0</div>
+            <div class="keypad-button" @onclick="Undo">&lt;</div>
+            <div class="keypad-button operator" @onclick="EvaluateExpression">=</div>
+        </div>
+    </div>
+</div>
+
+@code {
+    string inputDisplay = string.Empty;
+    bool clearInputBeforeAppend = false;
+
+    readonly char[] symbols = { '/', 'X', '+', '-', '.' };
+
+    void AppendInput(string inputValue)
+    {
+        double numValue;
+
+        if (clearInputBeforeAppend)
+        {
+            inputDisplay = string.Empty;
+        }
+
+        //disallow operators as first character
+        if (string.IsNullOrEmpty(inputDisplay) && inputValue.IndexOfAny(symbols) != -1)
+        {
+            return;
+        }
+
+        //disallow consecutive operators
+        if (!double.TryParse(inputValue, out numValue) && !string.IsNullOrEmpty(inputDisplay) && $"{inputDisplay[^1]}".IndexOfAny(symbols) != -1)
+        {
+            return;
+        }
+
+        //disallow multiple 0s
+        if (inputDisplay.Trim() == "0" && inputValue == "0")
+        {
+            return;
+        }
+
+        //disallow multiple decimal points for single input
+        //disallow 0 as input
+        if (clearInputBeforeAppend && double.TryParse(inputValue, out numValue))
+        {
+            return;
+        }
+
+        clearInputBeforeAppend = false;
+        inputDisplay += inputValue;
+    }
+
+    void Undo()
+    {
+        if (!clearInputBeforeAppend && inputDisplay.Length > 0)
+        {
+            inputDisplay = inputDisplay[0..^1];
+            return;
+        }
+    }
+
+    void ClearInput()
+    {
+        inputDisplay = string.Empty;
+    }
+
+    void ClearAll()
+    {
+        ClearInput();
+        calculations.Clear();
+    }
+
+    void EvaluateExpression()
+    {
+        var expression = inputDisplay;
+        var result = compute.Evaluate(inputDisplay.Replace('X', '*'));
+        calculations.Add(new(expression, result));
+        inputDisplay = result;
+        clearInputBeforeAppend = true;
+    }
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            messagingCenter.Register<Calculation>(this, (sender, er) =>
+            {
+                inputDisplay = er.Expression;
+                clearInputBeforeAppend = false;
+                StateHasChanged();
+            });
+        }
+        return base.OnAfterRenderAsync(firstRender);
+    }
+}

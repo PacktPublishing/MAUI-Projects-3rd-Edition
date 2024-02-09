@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:GalleryApp.Converters"
+             xmlns:viewModels="clr-namespace:GalleryApp.ViewModels"
+             xmlns:models="clr-namespace:GalleryApp.Models"
+             x:Class="GalleryApp.Views.GalleryView"
+             x:DataType="viewModels:GalleryViewModel"
+             Title="Photos">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BytesToImageConverter x:Key="ToImage" />
+            <Style TargetType="Grid">
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal" />
+                            <VisualState x:Name="Selected">
+                                <VisualState.Setters>
+                                    <Setter Property="Opacity" Value="0.5" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Select" Clicked="SelectToolBarItem_Clicked" />
+    </ContentPage.ToolbarItems>
+
+    <CollectionView x:Name="Photos" ItemsSource="{Binding Photos}" EmptyView="{Binding}" SelectionMode="Multiple" RemainingItemsThreshold="5" RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}">
+        <CollectionView.ItemsLayout>
+            <GridItemsLayout Orientation="Vertical" Span="3" HorizontalItemSpacing="0" />
+        </CollectionView.ItemsLayout>
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="models:Photo">
+                <Grid>
+                    <Image Aspect="AspectFill" Source="{Binding Bytes, Converter={StaticResource ToImage}}" HeightRequest="120" />
+                </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+
+        <CollectionView.EmptyViewTemplate>
+            <DataTemplate x:DataType="viewModels:GalleryViewModel">
+                <Grid>
+                    <ActivityIndicator IsVisible="{Binding IsBusy}" />
+                    <Label Text="No photos to import could be found" IsVisible="{Binding IsNotBusy}" HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" />
+                </Grid>
+            </DataTemplate>
+        </CollectionView.EmptyViewTemplate>
+    </CollectionView>
+
+</ContentPage>

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:HotdogOrNot.Converters"
+             xmlns:viewModels="clr-namespace:HotdogOrNot.ViewModels"
+             x:Class="HotdogOrNot.Views.ResultView"
+             x:DataType="viewModels:ResultViewModel"
+             Title="{Binding Title}">
+    <ContentPage.Resources>
+        <converters:BytesToImageConverter x:Key="ToImage" />
+    </ContentPage.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Image Source="{Binding PhotoBytes, Converter={StaticResource ToImage}}" Aspect="AspectFit" />
+        <Label Grid.Row="1" HorizontalOptions="Center" FontAttributes="Bold" Margin="10" Text="{Binding Description}" />
+    </Grid>
+</ContentPage>

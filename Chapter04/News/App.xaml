@@ -1,0 +1,20 @@
+﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:News"
+             x:Class="News.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <FontImage x:Key="HomeIcon" Glyph="&#xf015;" Size="22" FontFamily="FontAwesome" Color="Black" />
+            <FontImage x:Key="HeadlinesIcon" Glyph="&#xf70e;" Size="22" FontFamily="FontAwesome" />
+            <FontImage x:Key="NewsIcon" Glyph="&#xf1ea;" Size="22" FontFamily="FontAwesome" />
+            <FontImage x:Key="SettingsIcon" Glyph="&#xf013;" Size="22" FontFamily="FontAwesome" Color="Black" />
+            <FontImage x:Key="AboutIcon" Glyph="&#xf05a;" Size="22" FontFamily="FontAwesome" Color="Black" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
